@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>红色校史长廊 · 中山大学</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            overflow-x: hidden;
+        }
+
+        html {
+            background: #fff;
+        }
+
+        body {
+            color: #ffffff;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 375px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: #8b0000;
+        }
+
+        /* 网格线背景 */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 375px;
+            height: 120vh;
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            z-index: 0;
+            animation: moveGrid 15s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translateX(-50%) translateY(-40px); }
+            100% { transform: translateX(-50%) translateY(0); }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 顶部徽章 */
+        .header {
+            text-align: center;
+            padding: 32px 20px 10px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .badge {
+            display: inline-block;
+            border: 1.5px solid rgba(255, 204, 0, 0.65);
+            border-radius: 30px;
+            padding: 6px 22px;
+            font-size: 13px;
+            color: #ffcc00;
+            letter-spacing: 3px;
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.2);
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ===== 步骤进度条 ===== */
+        .step-bar {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 14px 0 10px;
+        }
+
+        .step-dots {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 204, 0, 0.35);
+            background: transparent;
+            transition: all 0.4s ease;
+            flex-shrink: 0;
+        }
+
+        .step-dot.active {
+            width: 14px;
+            height: 14px;
+            background: #ffcc00;
+            border-color: #ffcc00;
+            box-shadow: 0 0 12px rgba(255, 204, 0, 0.4);
+        }
+
+        .step-dot.done {
+            background: rgba(255, 204, 0, 0.7);
+            border-color: rgba(255, 204, 0, 0.7);
+        }
+
+        .step-line {
+            width: 32px;
+            height: 2px;
+            background: rgba(255, 204, 0, 0.2);
+            flex-shrink: 0;
+        }
+
+        .step-line.done {
+            background: rgba(255, 204, 0, 0.5);
+        }
+
+        .step-name {
+            font-size: 11px;
+            color: rgba(255, 204, 0, 0.6);
+            letter-spacing: 3px;
+            margin-top: 8px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+            letter-spacing: 3px;
+            margin-top: 18px;
+            line-height: 1.4;
+        }
+
+        .page-subtitle {
+            font-size: 12px;
+            color: rgba(240, 235, 225, 0.7);
+            margin-top: 8px;
+            letter-spacing: 4px;
+        }
+
+        /* 时间轴 */
+        .timeline-container {
+            padding: 16px 20px 140px;
+            position: relative;
+        }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            bottom: 140px;
+            left: 36px;
+            width: 2px;
+            background: linear-gradient(to bottom, #ffcc00, rgba(255, 204, 0, 0.1));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 28px;
+            padding-left: 44px;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .timeline-item.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            background-color: #8b0000;
+            border: 3px solid #ffcc00;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
+            z-index: 2;
+            transition: all 0.4s ease;
+            transform: scale(0.8);
+        }
+
+        .timeline-item.show::before {
+            transform: scale(1);
+        }
+
+        .timeline-item.active::before {
+            background-color: #ffcc00;
+            box-shadow: 0 0 15px #ffcc00, 0 0 30px #ffcc00;
+            transform: scale(1.2);
+        }
+
+        .year {
+            font-size: 28px;
+            font-weight: 900;
+            color: #ffcc00;
+            line-height: 1;
+            margin-bottom: 6px;
+            font-style: italic;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .year.year-long {
+            font-size: 20px;
+            letter-spacing: 0;
+            line-height: 1.15;
+        }
+
+        .content-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 12px 14px;
+            backdrop-filter: blur(5px);
+            transition: all 0.4s ease;
+        }
+
+        .timeline-item.active .content-card {
+            border-color: rgba(255, 204, 0, 0.7);
+            box-shadow: inset 0 0 15px rgba(255, 204, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .short-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .arrow {
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid #ffcc00;
+            border-bottom: 2px solid #ffcc00;
+            transform: rotate(45deg);
+            transition: transform 0.4s ease;
+            flex-shrink: 0;
+        }
+
+        .timeline-item.active .arrow {
+            transform: rotate(-135deg);
+        }
+
+        .detail-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), margin-top 0.4s ease, opacity 0.4s ease;
+            color: rgba(250, 245, 240, 0.9);
+            font-size: 13px;
+            line-height: 1.7;
+            opacity: 0;
+        }
+
+        .timeline-item.active .detail-content {
+            max-height: 560px;
+            margin-top: 8px;
+            opacity: 1;
+            transition: max-height 0.5s ease-in-out, margin-top 0.3s ease, opacity 0.5s ease 0.1s;
+        }
+
+        .keypoint {
+            display: inline-block;
+            background: rgba(255, 204, 0, 0.15);
+            color: #ffcc00;
+            border: 1px solid rgba(255, 204, 0, 0.4);
+            font-size: 10.5px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin: 6px 4px 0 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* 时间轴配图（本地 image/年份.jpg，图源多为维基共享资源） */
+        .detail-img-wrap {
+            margin-bottom: 8px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 204, 0, 0.28);
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .timeline-thumb {
+            display: block;
+            width: 100%;
+            height: 136px;
+            object-fit: cover;
+        }
+
+        .image-attribution {
+            font-size: 10px;
+            color: rgba(240, 235, 225, 0.45);
+            text-align: center;
+            padding: 0 20px 24px;
+            line-height: 1.6;
+        }
+
+        .image-attribution a {
+            color: rgba(255, 204, 0, 0.55);
+            text-decoration: none;
+        }
+
+        .image-attribution a:hover {
+            text-decoration: underline;
+        }
+
+        /* 底部按钮 */
+        .next-btn-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 375px;
+            padding: 15px 20px 28px;
+            background: linear-gradient(to top, #8b0000 70%, transparent);
+            z-index: 100;
+        }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 14px 0;
+            background: linear-gradient(135deg, #ffcc00, #f39c12);
+            color: #8b0000;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: 3px;
+            transition: transform 0.15s;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .next-btn:active {
+            transform: scale(0.97);
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="header">
+                <div class="badge">★ 中山大学党校</div>
+
+                <!-- 步骤进度条 -->
+                <div class="step-bar">
+                    <div class="step-dots">
+                        <div class="step-dot done"></div>
+                        <div class="step-line done"></div>
+                        <div class="step-dot active"></div>
+                        <div class="step-line"></div>
+                        <div class="step-dot"></div>
+                        <div class="step-line"></div>
+                        <div class="step-dot"></div>
+                    </div>
+                    <div class="step-name">红色校史</div>
+                </div>
+
+                <div class="page-title">红色校史长廊</div>
+                <div class="page-subtitle">百年中大 · 红色基因</div>
+            </div>
+
+            <div class="timeline-container" id="timeline">
+
+                <div class="timeline-item" onclick="handleManualClick(this)">
+                    <div class="year">1924</div>
+                    <div class="content-card">
+                        <div class="short-title">
+                            <span>孙中山创立国立广东大学</span>
+                            <div class="arrow"></div>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-img-wrap">
+                                <img class="timeline-thumb" src="image/1924.jpg" alt="1924年孙中山在广州" loading="lazy" decoding="async" width="347" height="136" />
+                            </div>
+                            1924年2月，孙中山先生发布大元帅令，合并三校组建国立广东大学，并亲笔题写校训"博学、审问、慎思、明辨、笃行"。"一文一武"——国立广东大学与黄埔军校，同为革命人才摇篮。
+                            <div>
+                                <span class="keypoint">革命摇篮</span>
+                                <span class="keypoint">校训诞生</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="handleManualClick(this)">
+                    <div class="year">1926</div>
+                    <div class="content-card">
+                        <div class="short-title">
+                            <span>更名国立中山大学</span>
+                            <div class="arrow"></div>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-img-wrap">
+                                <img class="timeline-thumb" src="image/1926.jpg" alt="孙中山先生肖像" loading="lazy" decoding="async" width="347" height="136" />
+                            </div>
+                            1926年秋，国民政府核定并下令将国立广东大学更名为「国立中山大学」，以纪念孙中山先生。1927年初鲁迅出任文学系主任兼教务主任；李大钊参与建校筹备并推动进步人士入校，毛泽东、陈延年等在粤的革命实践与校内进步思潮相呼应，中大成为华南马克思主义传播的重要阵地。
+                            <div>
+                                <span class="keypoint">鲁迅执教</span>
+                                <span class="keypoint">红色基因</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="handleManualClick(this)">
+                    <div class="year">1938</div>
+                    <div class="content-card">
+                        <div class="short-title">
+                            <span>烽火逆行 弦歌不辍</span>
+                            <div class="arrow"></div>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-img-wrap">
+                                <img class="timeline-thumb" src="image/1938.jpg" alt="1938年广州岭南大学码头一带" loading="lazy" decoding="async" width="347" height="136" />
+                            </div>
+                            广州沦陷前夕起，中大奉命分批撤离，辗转云南澂江（今云南澄江市一带），后又回迁粤北坪石办学多年；战事再吃紧时再疏散至粤东梅县等地，多次播迁仍弦歌不辍。烽火办学期间累计培养学子近两万，粤北坪石一段尤为集中，宣传纪念语境下常被称作「华南教育的根脉」。
+                            <div>
+                                <span class="keypoint">西迁澂江</span>
+                                <span class="keypoint">坪石办学</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="handleManualClick(this)">
+                    <div class="year">1949</div>
+                    <div class="content-card">
+                        <div class="short-title">
+                            <span>迎接新生 服务人民</span>
+                            <div class="arrow"></div>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-img-wrap">
+                                <img class="timeline-thumb" src="image/1949.jpg" alt="1949年解放军进驻广州" loading="lazy" decoding="async" width="347" height="136" />
+                            </div>
+                            1949年11月2日，广州市军事管制委员会文教接管机构接管国立中山大学，学校迎来历史性新生。1952年院系调整，在原国立中山大学与私立岭南大学等多校院系重组基础上组建新的中山大学，校址迁至广州海珠康乐园（岭南大学旧址），开启服务新中国建设的崭新篇章。
+                            <div>
+                                <span class="keypoint">人民接管</span>
+                                <span class="keypoint">康乐园</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="handleManualClick(this)">
+                    <div class="year year-long">1978—2001</div>
+                    <div class="content-card">
+                        <div class="short-title">
+                            <span>改革春风 学科复兴</span>
+                            <div class="arrow"></div>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-img-wrap">
+                                <img class="timeline-thumb" src="image/1978-2001.jpg" alt="中山大学北门（康乐园）" loading="lazy" decoding="async" width="347" height="136" />
+                            </div>
+                            1977年国家恢复高考后，中大自1978年春季学期迎来大批新生入校，并成为全国较早复办经济学、法学、人类学、社会学等学科的高校之一。2001年原中山医科大学并入，学校逐步形成文理医工等多学科协调发展格局。
+                            <div>
+                                <span class="keypoint">高考复招</span>
+                                <span class="keypoint">学科重生</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="handleManualClick(this)">
+                    <div class="year">2024</div>
+                    <div class="content-card">
+                        <div class="short-title">
+                            <span>百年华诞 总书记致贺信</span>
+                            <div class="arrow"></div>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-img-wrap">
+                                <img class="timeline-thumb" src="image/2024.jpg" alt="中山大学世纪华诞主题景观（1924—2024）" loading="lazy" decoding="async" width="347" height="136" />
+                            </div>
+                            2024年11月12日，中大迎来建校100周年。习近平总书记致贺信，希望中大"传承红色基因，坚持为党育人、为国育才"，加快建设中国特色世界一流大学，为推进中国式现代化作出新的更大贡献。
+                            <div>
+                                <span class="keypoint">百年华诞</span>
+                                <span class="keypoint">总书记贺信</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+                <p class="image-attribution">历史配图保存在 <code>image/</code> 并以年份命名；部分取自 <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">维基共享资源</a>（按页面许可署名）；<code>2024.jpg</code> 为你指定的公开报道配图（使用前请核对原站版权声明）。</p>
+        </div>
+
+        <div class="next-btn-wrapper">
+            <a href="page4.html" class="next-btn">下一页</a>
+        </div>
+    </div>
+
+    <script>
+        const items = document.querySelectorAll('.timeline-item');
+        let currentIndex = 0;
+        let autoPlayTimer = null;
+        let isInterrupted = false;
+
+        function autoPlayTimeline() {
+            if (isInterrupted || currentIndex >= items.length) return;
+
+            const currentItem = items[currentIndex];
+            currentItem.classList.add('show');
+
+            setTimeout(function() {
+                if (isInterrupted) return;
+                currentItem.classList.add('active');
+                currentItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+
+            currentIndex++;
+            autoPlayTimer = setTimeout(autoPlayTimeline, 1500);
+        }
+
+        function handleManualClick(element) {
+            isInterrupted = true;
+            clearTimeout(autoPlayTimer);
+
+            element.classList.add('show');
+
+            if (element.classList.contains('active')) {
+                element.classList.remove('active');
+            } else {
+                element.classList.add('active');
+            }
+        }
+
+        window.onload = function() {
+            setTimeout(autoPlayTimeline, 1000);
+        }
+    </script>
+</body>
+</html>

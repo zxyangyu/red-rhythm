@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>党的基础知识互动测验</title>
+    <style>
+        :root {
+            --red-dark: #B71C1C;
+            --red-mid: #C41E3A;
+            --red-light: #E53935;
+            --gold: #C9A96E;
+            --gold-light: #D4A843;
+            --white: #FFFFFF;
+            --bg-light: #FFF8F5;
+            --card-bg: #FFFFFF;
+            --text-dark: #2C1810;
+            --text-mid: #4A3030;
+            --text-light: #666;
+            --green: #2E7D32;
+            --green-light: #4CAF50;
+            --green-bg: #E8F5E9;
+            --red-wrong: #D32F2F;
+            --red-wrong-bg: #FFEBEE;
+            --gray-light: #E0D5D0;
+            --gray-mid: #BDB5B0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --radius-sm: 10px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --font-title: 20px;
+            --font-body: 15px;
+            --font-option: 14.5px;
+            --font-small: 12px;
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.35s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            background: #F5F0EB;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100dvh;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* 主容器 - 模拟手机竖屏 */
+        .phone-frame {
+            width: 375px;
+            max-width: 100vw;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: var(--bg-light);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 400px) {
+            .phone-frame {
+                width: 100vw;
+                max-width: 100vw;
+            }
+        }
+
+        /* ===== 顶部标题栏 ===== */
+        .header {
+            background: linear-gradient(180deg, #8B1A1A 0%, #B71C1C 40%, #C41E3A 100%);
+            padding: 20px 18px 16px 18px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+            box-shadow: 0 2px 12px rgba(180, 30, 30, 0.25);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 150, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 75% 40%, rgba(255, 200, 120, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header-star {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            position: relative;
+            margin: 0 8px;
+            vertical-align: middle;
+            animation: starGlow 2s ease-in-out infinite;
+        }
+
+        .header-star::before {
+            content: '★';
+            font-size: 18px;
+            color: #F9C74F;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 0 8px rgba(249, 199, 79, 0.6);
+        }
+
+        @keyframes starGlow {
+            0%,
+            100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(1.5);
+            }
+        }
+
+        .header-title {
+            font-size: var(--font-title);
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: 1.5px;
+            display: inline-block;
+            position: relative;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-subtitle {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        /* ===== 模块步骤进度条 ===== */
+        .step-bar {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0 6px;
+            background: linear-gradient(180deg, #8B1A1A, #B71C1C);
+        }
+
+        .step-dots {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 215, 0, 0.35);
+            background: transparent;
+            transition: all 0.4s ease;
+            flex-shrink: 0;
+        }
+
+        .step-dot.active {
+            width: 14px;
+            height: 14px;
+            background: #FFD700;
+            border-color: #FFD700;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+        }
+
+        .step-dot.done {
+            background: rgba(255, 215, 0, 0.7);
+            border-color: rgba(255, 215, 0, 0.7);
+        }
+
+        .step-line {
+            width: 32px;
+            height: 2px;
+            background: rgba(255, 215, 0, 0.2);
+            flex-shrink: 0;
+        }
+
+        .step-line.done {
+            background: rgba(255, 215, 0, 0.5);
+        }
+
+        .step-name {
+            font-size: 11px;
+            color: rgba(255, 215, 0, 0.6);
+            letter-spacing: 3px;
+            margin-top: 6px;
+        }
+
+        /* ===== 进度指示器 ===== */
+        .progress-bar-wrap {
+            padding: 14px 20px 8px 20px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #FFF;
+            border-bottom: 1px solid #F0E8E0;
+        }
+
+        .progress-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            transition: all var(--transition-normal);
+            position: relative;
+            background: #F5F0EB;
+            color: #BDB5B0;
+            border: 2px solid #E0D5D0;
+        }
+
+        .progress-dot.active {
+            background: var(--red-mid);
+            color: #FFF;
+            border-color: var(--red-mid);
+            transform: scale(1.15);
+            box-shadow: 0 2px 10px rgba(196, 30, 58, 0.35);
+            animation: dotPulse 0.5s ease-out;
+        }
+
+        .progress-dot.done-correct {
+            background: var(--green);
+            color: #FFF;
+            border-color: var(--green);
+        }
+
+        .progress-dot.done-wrong {
+            background: var(--red-wrong);
+            color: #FFF;
+            border-color: var(--red-wrong);
+        }
+
+        @keyframes dotPulse {
+            0% {
+                transform: scale(1);
+            }
+            60% {
+                transform: scale(1.25);
+            }
+            100% {
+                transform: scale(1.15);
+            }
+        }
+
+        .progress-line {
+            width: 18px;
+            height: 2px;
+            background: #E0D5D0;
+            border-radius: 1px;
+            transition: background var(--transition-normal);
+        }
+
+        .progress-line.done {
+            background: var(--green);
+        }
+
+        .progress-line.done-wrong-line {
+            background: var(--red-wrong);
+            opacity: 0.7;
+        }
+
+        /* ===== 主内容区 ===== */
+        .main-content {
+            flex: 1;
+            padding: 16px 16px 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ===== 题目卡片 ===== */
+        .question-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 20px 18px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition-normal);
+            position: relative;
+            border: 1px solid #F0E8E0;
+            animation: cardIn 0.4s ease-out;
+        }
+
+        @keyframes cardIn {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-card.shake {
+            animation: cardShake 0.5s ease;
+        }
+
+        @keyframes cardShake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            15% {
+                transform: translateX(-6px);
+            }
+            30% {
+                transform: translateX(6px);
+            }
+            45% {
+                transform: translateX(-4px);
+            }
+            60% {
+                transform: translateX(4px);
+            }
+            75% {
+                transform: translateX(-2px);
+            }
+            90% {
+                transform: translateX(2px);
+            }
+        }
+
+        .question-number {
+            display: inline-block;
+            background: var(--red-mid);
+            color: #FFF;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== 选项按钮 ===== */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            width: 100%;
+            padding: 13px 15px;
+            background: #FFF;
+            border: 2px solid #E8DED5;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--font-option);
+            color: var(--text-mid);
+            text-align: left;
+            line-height: 1.55;
+            transition: all var(--transition-fast);
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            min-height: 48px;
+            letter-spacing: 0.2px;
+        }
+
+        .option-btn:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease;
+        }
+
+        .option-btn:hover {
+            border-color: #D0C5BA;
+            background: #FDFAF7;
+        }
+
+        .option-letter {
+            flex-shrink: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #F5F0EB;
+            color: var(--text-mid);
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            margin-top: 1px;
+        }
+
+        .option-text {
+            flex: 1;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            min-width: 0;
+        }
+
+        /* 正确状态 */
+        .option-btn.correct {
+            background: #E8F5E9;
+            border-color: var(--green-light);
+            color: #1B5E20;
+            animation: correctPulse 0.5s ease;
+        }
+        .option-btn.correct .option-letter {
+            background: var(--green);
+            color: #FFF;
+        }
+
+        @keyframes correctPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 0 14px rgba(46, 125, 50, 0.15);
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(46, 125, 50, 0);
+                transform: scale(1);
+            }
+        }
+
+        /* 错误状态 */
+        .option-btn.wrong {
+            background: #FFEBEE;
+            border-color: var(--red-wrong);
+            color: #B71C1C;
+            animation: wrongShake 0.5s ease;
+        }
+        .option-btn.wrong .option-letter {
+            background: var(--red-wrong);
+            color: #FFF;
+        }
+
+        @keyframes wrongShake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-5px);
+            }
+            40% {
+                transform: translateX(5px);
+            }
+            60% {
+                transform: translateX(-3px);
+            }
+            80% {
+                transform: translateX(3px);
+            }
+        }
+
+        /* 正确答案高亮（用户选错时显示） */
+        .option-btn.reveal-correct {
+            background: #E8F5E9;
+            border-color: var(--green-light);
+            color: #1B5E20;
+            animation: correctPulse 0.5s ease 0.15s;
+        }
+        .option-btn.reveal-correct .option-letter {
+            background: var(--green);
+            color: #FFF;
+        }
+
+        /* 禁用状态 */
+        .option-btn.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .option-btn.correct.disabled,
+        .option-btn.wrong.disabled,
+        .option-btn.reveal-correct.disabled {
+            opacity: 1;
+        }
+
+        /* 反馈图标 */
+        .feedback-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
+            font-weight: 700;
+            animation: iconPop 0.4s ease;
+            pointer-events: none;
+        }
+        .feedback-icon.correct-icon {
+            color: var(--green);
+        }
+        .feedback-icon.wrong-icon {
+            color: var(--red-wrong);
+        }
+
+        @keyframes iconPop {
+            0% {
+                opacity: 0;
+                transform: translateY(-50%) scale(0);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(-50%) scale(1.3);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(-50%) scale(1);
+            }
+        }
+
+        /* ===== 得分展示区 ===== */
+        .score-panel {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 28px 20px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            animation: scoreBounceIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+            border: 2px solid #F0E8E0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-panel::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(201, 169, 110, 0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        @keyframes scoreBounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            60% {
+                opacity: 1;
+                transform: scale(1.04) translateY(-4px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .score-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: conic-gradient(var(--red-mid) calc(var(--score-percent, 0) * 1%),
+                    #F0E8E0 calc(var(--score-percent, 0) * 1%));
+            box-shadow: 0 4px 16px rgba(196, 30, 58, 0.2);
+        }
+
+        .score-circle-inner {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: #FFF;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .score-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--red-mid);
+            line-height: 1;
+        }
+
+        .score-total {
+            font-size: 12px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .score-comment {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 8px 0 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .score-detail {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .score-stars {
+            font-size: 28px;
+            letter-spacing: 4px;
+            margin: 6px 0;
+        }
+
+        /* ===== 底部按钮 ===== */
+        .bottom-area {
+            flex-shrink: 0;
+            padding: 12px 20px 24px 20px;
+            background: #FFF;
+            border-top: 1px solid #F0E8E0;
+            text-align: center;
+        }
+
+        .btn-next {
+            display: inline-block;
+            width: 100%;
+            max-width: 335px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-decoration: none;
+            color: #FFF;
+            background: linear-gradient(135deg, #C41E3A 0%, #B71C1C 100%);
+            box-shadow: 0 4px 14px rgba(196, 30, 58, 0.35);
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        .btn-next:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(196, 30, 58, 0.3);
+        }
+
+        .btn-next::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn-next:active::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        .btn-next.hidden {
+            display: none;
+        }
+
+        .btn-next.disabled-btn {
+            background: #C5BFB8;
+            box-shadow: none;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* 答题中的提示文字 */
+        .answer-hint {
+            font-size: 11px;
+            color: #B0A8A0;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== 滚动条美化 ===== */
+        .phone-frame::-webkit-scrollbar {
+            width: 3px;
+        }
+        .phone-frame::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .phone-frame::-webkit-scrollbar-thumb {
+            background: #D5CCC5;
+            border-radius: 3px;
+        }
+
+        /* ===== 装饰性粒子背景 ===== */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(196, 30, 58, 0.06);
+            animation: floatUp 8s ease-in infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.5;
+            }
+            80% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* 响应式微调 */
+        @media (max-width: 380px) {
+            .question-text {
+                font-size: 15px;
+            }
+            .option-btn {
+                font-size: 13.5px;
+                padding: 12px 13px;
+            }
+            .option-letter {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+            }
+            .header-title {
+                font-size: 18px;
+            }
+            .score-number {
+                font-size: 28px;
+            }
+        }
+
+        @media (min-width: 400px) {
+            .phone-frame {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 主容器 -->
+    <div class="phone-frame" id="phoneFrame">
+
+        <!-- 顶部标题栏 -->
+        <div class="header">
+            <span class="header-star"></span>
+            <span class="header-title">党的基础知识</span>
+            <span class="header-star"></span>
+            <div class="header-subtitle">互动测验 · 共5题</div>
+        </div>
+
+        <!-- 模块步骤进度条 -->
+        <div class="step-bar">
+            <div class="step-dots">
+                <div class="step-dot active"></div>
+                <div class="step-line"></div>
+                <div class="step-dot"></div>
+                <div class="step-line"></div>
+                <div class="step-dot"></div>
+                <div class="step-line"></div>
+                <div class="step-dot"></div>
+            </div>
+            <div class="step-name">知识测验</div>
+        </div>
+
+        <!-- 进度指示器 -->
+        <div class="progress-bar-wrap" id="progressBarWrap">
+            <div class="progress-dot active" data-index="0">1</div>
+            <div class="progress-line" data-line="0"></div>
+            <div class="progress-dot" data-index="1">2</div>
+            <div class="progress-line" data-line="1"></div>
+            <div class="progress-dot" data-index="2">3</div>
+            <div class="progress-line" data-line="2"></div>
+            <div class="progress-dot" data-index="3">4</div>
+            <div class="progress-line" data-line="3"></div>
+            <div class="progress-dot" data-index="4">5</div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content" id="mainContent">
+            <!-- 题目卡片 -->
+            <div class="question-card" id="questionCard">
+                <span class="question-number" id="questionNumber">第 1 题</span>
+                <p class="question-text" id="questionText"></p>
+            </div>
+
+            <!-- 选项列表 -->
+            <div class="options-list" id="optionsList"></div>
+
+            <!-- 得分面板（初始隐藏） -->
+            <div class="score-panel" id="scorePanel" style="display:none;">
+                <div class="score-circle" id="scoreCircle">
+                    <div class="score-circle-inner">
+                        <span class="score-number" id="scoreNumber">0</span>
+                        <span class="score-total">/ 5</span>
+                    </div>
+                </div>
+                <div class="score-stars" id="scoreStars"></div>
+                <p class="score-comment" id="scoreComment"></p>
+                <p class="score-detail" id="scoreDetail"></p>
+            </div>
+        </div>
+
+        <!-- 底部区域 -->
+        <div class="bottom-area" id="bottomArea">
+            <p class="answer-hint" id="answerHint">👆 请选择你认为正确的答案</p>
+            <button class="btn-next hidden" id="btnNext" onclick="goToNextPage()">
+                下一页 ➤
+            </button>
+        </div>
+
+    </div>
+
+    <!-- 背景粒子 -->
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <script>
+        (function() {
+            // ===== 题目数据 =====
+            const quizData = [{
+                id: 1,
+                question: '中国共产党成立于哪一年？',
+                options: [
+                    'A. 1919年',
+                    'B. 1921年',
+                    'C. 1927年',
+                    'D. 1949年'
+                ],
+                correctIndex: 1, // B
+            }, {
+                id: 2,
+                question: '党的根本宗旨是什么？',
+                options: [
+                    'A. 发展经济',
+                    'B. 全心全意为人民服务',
+                    'C. 实现共产主义',
+                    'D. 建设小康社会'
+                ],
+                correctIndex: 1, // B
+            }, {
+                id: 3,
+                question: '预备党员预备期多长？',
+                options: [
+                    'A. 半年',
+                    'B. 一年',
+                    'C. 两年',
+                    'D. 三年'
+                ],
+                correctIndex: 1, // B
+            }, {
+                id: 4,
+                question: '"两个确立"的内容是什么？',
+                options: [
+                    'A. 核心地位和指导思想地位',
+                    'B. 总书记和军委主席地位',
+                    'C. 党中央核心、全党核心地位和习近平新时代中国特色社会主义思想的指导地位',
+                    'D. 以上都不对'
+                ],
+                correctIndex: 2, // C
+            }, {
+                id: 5,
+                question: '党的二十大召开于哪年？',
+                options: [
+                    'A. 2020年',
+                    'B. 2021年',
+                    'C. 2022年',
+                    'D. 2023年'
+                ],
+                correctIndex: 2, // C
+            }];
+
+            // ===== 状态变量 =====
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let answeredFlags = [false, false, false, false, false]; // 每题是否已答
+            let userAnswers = [null, null, null, null, null]; // 用户每题的答案
+            let isLocked = false; // 选项锁定状态
+            let autoAdvanceTimer = null;
+
+            // ===== DOM元素 =====
+            const questionCard = document.getElementById('questionCard');
+            const questionNumber = document.getElementById('questionNumber');
+            const questionText = document.getElementById('questionText');
+            const optionsList = document.getElementById('optionsList');
+            const scorePanel = document.getElementById('scorePanel');
+            const scoreCircle = document.getElementById('scoreCircle');
+            const scoreNumber = document.getElementById('scoreNumber');
+            const scoreStars = document.getElementById('scoreStars');
+            const scoreComment = document.getElementById('scoreComment');
+            const scoreDetail = document.getElementById('scoreDetail');
+            const btnNext = document.getElementById('btnNext');
+            const answerHint = document.getElementById('answerHint');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            const progressLines = document.querySelectorAll('.progress-line');
+            const mainContent = document.getElementById('mainContent');
+            const bottomArea = document.getElementById('bottomArea');
+
+            // ===== 初始化背景粒子 =====
+            function initBgParticles() {
+                const container = document.getElementById('bgParticles');
+                container.innerHTML = '';
+                const count = 18;
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('bg-particle');
+                    const size = Math.random() * 30 + 8;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 10 + 's';
+                    particle.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                    particle.style.opacity = Math.random() * 0.4 + 0.1;
+                    container.appendChild(particle);
+                }
+            }
+
+            // ===== 渲染题目 =====
+            function renderQuestion(index) {
+                if (index >= quizData.length) {
+                    showScore();
+                    return;
+                }
+
+                const qData = quizData[index];
+                currentQuestionIndex = index;
+
+                // 更新题目卡片
+                questionNumber.textContent = '第 ' + (index + 1) + ' 题';
+                questionText.textContent = qData.question;
+                questionCard.classList.remove('shake');
+                // 触发卡片入场动画
+                questionCard.style.animation = 'none';
+                void questionCard.offsetWidth;
+                questionCard.style.animation = 'cardIn 0.4s ease-out';
+
+                // 渲染选项
+                optionsList.innerHTML = '';
+                qData.options.forEach((optText, optIndex) => {
+                    const btn = document.createElement('button');
+                    btn.classList.add('option-btn');
+                    btn.setAttribute('data-option-index', optIndex);
+                    btn.innerHTML = `
+                                <span class="option-letter">${String.fromCharCode(65 + optIndex)}</span>
+                                <span class="option-text">${optText.replace(/^[A-D]\.\s*/, '')}</span>
+                            `;
+                    btn.addEventListener('click', function(e) {
+                        handleOptionClick(optIndex, btn);
+                    });
+                    optionsList.appendChild(btn);
+                });
+
+                // 如果该题已答过，恢复状态
+                if (answeredFlags[index] && userAnswers[index] !== null) {
+                    restoreAnsweredState(index);
+                }
+
+                // 更新进度指示器
+                updateProgressDots(index);
+
+                // 隐藏得分面板
+                scorePanel.style.display = 'none';
+                // 显示选项列表
+                optionsList.style.display = 'flex';
+                // 显示题目卡片
+                questionCard.style.display = 'block';
+                // 隐藏下一页按钮
+                btnNext.classList.add('hidden');
+                // 显示提示
+                answerHint.style.display = 'block';
+                answerHint.textContent = '👆 请选择你认为正确的答案';
+
+                // 解锁
+                isLocked = false;
+                if (autoAdvanceTimer) {
+                    clearTimeout(autoAdvanceTimer);
+                    autoAdvanceTimer = null;
+                }
+
+                // 滚动到顶部
+                document.getElementById('phoneFrame').scrollTop = 0;
+                mainContent.scrollTop = 0;
+            }
+
+            // ===== 恢复已答题状态 =====
+            function restoreAnsweredState(index) {
+                const qData = quizData[index];
+                const userAnswer = userAnswers[index];
+                const correctIdx = qData.correctIndex;
+                const allBtns = optionsList.querySelectorAll('.option-btn');
+
+                allBtns.forEach(btn => {
+                    btn.classList.add('disabled');
+                    const optIdx = parseInt(btn.getAttribute('data-option-index'));
+                    if (optIdx === correctIdx) {
+                        btn.classList.add('correct');
+                        // 移除可能存在的旧图标
+                        const oldIcon = btn.querySelector('.feedback-icon');
+                        if (oldIcon) oldIcon.remove();
+                        const icon = document.createElement('span');
+                        icon.classList.add('feedback-icon', 'correct-icon');
+                        icon.textContent = '✓';
+                        btn.appendChild(icon);
+                    }
+                    if (optIdx === userAnswer && userAnswer !== correctIdx) {
+                        btn.classList.add('wrong');
+                        const oldIcon = btn.querySelector('.feedback-icon');
+                        if (oldIcon) oldIcon.remove();
+                        const icon = document.createElement('span');
+                        icon.classList.add('feedback-icon', 'wrong-icon');
+                        icon.textContent = '✗';
+                        btn.appendChild(icon);
+                    }
+                });
+
+                isLocked = true;
+                answerHint.textContent = '✅ 本题已作答';
+                updateProgressDots(index);
+            }
+
+            // ===== 处理选项点击 =====
+            function handleOptionClick(optIndex, clickedBtn) {
+                if (isLocked) return;
+                if (answeredFlags[currentQuestionIndex]) return;
+
+                isLocked = true;
+                answeredFlags[currentQuestionIndex] = true;
+                userAnswers[currentQuestionIndex] = optIndex;
+
+                const qData = quizData[currentQuestionIndex];
+                const correctIdx = qData.correctIndex;
+                const isCorrect = (optIndex === correctIdx);
+                const allBtns = optionsList.querySelectorAll('.option-btn');
+
+                // 禁用所有按钮
+                allBtns.forEach(btn => btn.classList.add('disabled'));
+
+                if (isCorrect) {
+                    // 正确！
+                    score++;
+                    clickedBtn.classList.add('correct');
+                    const icon = document.createElement('span');
+                    icon.classList.add('feedback-icon', 'correct-icon');
+                    icon.textContent = '✓';
+                    clickedBtn.appendChild(icon);
+                    answerHint.textContent = '✅ 回答正确！太棒了！';
+                    answerHint.style.color = '#2E7D32';
+                } else {
+                    // 错误
+                    clickedBtn.classList.add('wrong');
+                    const wrongIcon = document.createElement('span');
+                    wrongIcon.classList.add('feedback-icon', 'wrong-icon');
+                    wrongIcon.textContent = '✗';
+                    clickedBtn.appendChild(wrongIcon);
+
+                    // 高亮正确答案
+                    allBtns.forEach(btn => {
+                        const oi = parseInt(btn.getAttribute('data-option-index'));
+                        if (oi === correctIdx) {
+                            btn.classList.add('reveal-correct');
+                            const correctIcon = document.createElement('span');
+                            correctIcon.classList.add('feedback-icon', 'correct-icon');
+                            correctIcon.textContent = '✓';
+                            btn.appendChild(correctIcon);
+                        }
+                    });
+
+                    answerHint.textContent = '❌ 回答错误，正确答案已高亮';
+                    answerHint.style.color = '#D32F2F';
+                    // 卡片轻微震动
+                    questionCard.classList.add('shake');
+                    setTimeout(() => questionCard.classList.remove('shake'), 500);
+                }
+
+                // 更新进度指示器
+                updateProgressDots(currentQuestionIndex);
+
+                // 自动进入下一题
+                const delay = isCorrect ? 900 : 1400;
+                autoAdvanceTimer = setTimeout(() => {
+                    autoAdvanceTimer = null;
+                    if (currentQuestionIndex < quizData.length - 1) {
+                        renderQuestion(currentQuestionIndex + 1);
+                    } else {
+                        showScore();
+                    }
+                    answerHint.style.color = '#B0A8A0';
+                }, delay);
+            }
+
+            // ===== 更新进度指示器 =====
+            function updateProgressDots(activeIndex) {
+                progressDots.forEach((dot, i) => {
+                    dot.classList.remove('active', 'done-correct', 'done-wrong');
+                    if (i === activeIndex && !answeredFlags[i]) {
+                        dot.classList.add('active');
+                        dot.textContent = i + 1;
+                    } else if (answeredFlags[i]) {
+                        if (userAnswers[i] === quizData[i].correctIndex) {
+                            dot.classList.add('done-correct');
+                            dot.textContent = '✓';
+                        } else {
+                            dot.classList.add('done-wrong');
+                            dot.textContent = '✗';
+                        }
+                    } else if (i < activeIndex && !answeredFlags[i]) {
+                        // 跳过的（理论上不会出现）
+                        dot.textContent = i + 1;
+                    } else {
+                        dot.textContent = i + 1;
+                    }
+                });
+
+                // 更新连线
+                progressLines.forEach((line, i) => {
+                    line.classList.remove('done', 'done-wrong-line');
+                    if (answeredFlags[i] && answeredFlags[i + 1]) {
+                        const bothCorrect = (userAnswers[i] === quizData[i].correctIndex) &&
+                            (userAnswers[i + 1] === quizData[i + 1].correctIndex);
+                        if (bothCorrect) {
+                            line.classList.add('done');
+                        } else if (answeredFlags[i] && answeredFlags[i + 1]) {
+                            line.classList.add('done-wrong-line');
+                        }
+                    } else if (answeredFlags[i]) {
+                        line.classList.add('done-wrong-line');
+                    }
+                });
+            }
+
+            // ===== 显示得分 =====
+            function showScore() {
+                // 隐藏选项和题目卡片
+                optionsList.style.display = 'none';
+                questionCard.style.display = 'none';
+                answerHint.style.display = 'none';
+
+                // 显示得分面板
+                scorePanel.style.display = 'block';
+                scorePanel.style.animation = 'none';
+                void scorePanel.offsetWidth;
+                scorePanel.style.animation = 'scoreBounceIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1)';
+
+                scoreNumber.textContent = score;
+
+                // 更新圆环进度
+                const percent = (score / 5) * 100;
+                scoreCircle.style.setProperty('--score-percent', percent);
+                scoreCircle.style.background = `conic-gradient(#C41E3A ${percent * 3.6}deg, #F0E8E0 ${percent * 3.6}deg)`;
+
+                // 评语和星级
+                let stars = '';
+                let comment = '';
+                let detail = '';
+                switch (score) {
+                    case 5:
+                        stars = '⭐⭐⭐⭐⭐';
+                        comment = '太棒了！满分通过！';
+                        detail = '你对党的基础知识掌握得非常扎实，\n展现了优秀的学习成果！';
+                        break;
+                    case 4:
+                        stars = '⭐⭐⭐⭐☆';
+                        comment = '很好！表现优秀！';
+                        detail = '只差一点点就满分了，\n继续加油！';
+                        break;
+                    case 3:
+                        stars = '⭐⭐⭐☆☆';
+                        comment = '不错，继续努力！';
+                        detail = '基础知识掌握良好，\n还有提升空间哦~';
+                        break;
+                    case 2:
+                        stars = '⭐⭐☆☆☆';
+                        comment = '需要加强学习哦！';
+                        detail = '建议复习党的基础知识，\n争取下次更好的成绩。';
+                        break;
+                    case 1:
+                        stars = '⭐☆☆☆☆';
+                        comment = '要多多学习呀！';
+                        detail = '党的基础知识还需要系统学习，\n加油！';
+                        break;
+                    case 0:
+                        stars = '☆☆☆☆☆';
+                        comment = '别灰心，从零开始！';
+                        detail = '建议认真学习党的基础知识，\n相信你一定能进步的！';
+                        break;
+                }
+                scoreStars.textContent = stars;
+                scoreComment.textContent = comment;
+                scoreDetail.textContent = detail.replace(/\n/g, ' ');
+
+                // 显示下一页按钮
+                btnNext.classList.remove('hidden');
+                btnNext.classList.remove('disabled-btn');
+                btnNext.textContent = '下一页 ➤';
+
+                // 更新所有进度点
+                updateProgressDots(4);
+
+                // 滚动查看得分
+                setTimeout(() => {
+                    scorePanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 200);
+            }
+
+            // ===== 跳转下一页 =====
+            window.goToNextPage = function() {
+                if (!answeredFlags.every(f => f === true)) {
+                    // 还有题目未答，提示
+                    return;
+                }
+                // 添加点击动效
+                btnNext.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    btnNext.style.transform = 'scale(1)';
+                    window.location.href = 'page3.html';
+                }, 180);
+            };
+
+            // ===== 初始化 =====
+            function init() {
+                initBgParticles();
+                renderQuestion(0);
+                // 初始隐藏得分面板
+                scorePanel.style.display = 'none';
+                btnNext.classList.add('hidden');
+                answerHint.style.display = 'block';
+                answerHint.style.color = '#B0A8A0';
+            }
+
+            // ===== 启动 =====
+            init();
+
+            // ===== 窗口大小变化时重新生成粒子 =====
+            let resizeDebounce;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeDebounce);
+                resizeDebounce = setTimeout(initBgParticles, 500);
+            });
+
+            console.log('✅ 党的基础知识互动测验 - page2.html 已就绪');
+            console.log('📋 共 ' + quizData.length + ' 道题目');
+            console.log('📱 适配手机竖屏 375px');
+            console.log('🎯 选择后自动判断对错并显示动效');
+            console.log('🏆 全部完成后展示得分并跳转 page3.html');
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>初心·印记——走近身边的共产党员</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+        }
+
+        html {
+            background: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 375px;
+            height: 100vh;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 28px 44px;
+            cursor: pointer;
+        }
+
+        .bg-slideshow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-slideshow img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.8s ease;
+        }
+
+        .bg-slideshow img.active {
+            opacity: 1;
+        }
+
+        /* ---- 所有覆盖内容默认透明 ---- */
+        .overlay,
+        .overlay-vignette,
+        .embers,
+        .header,
+        .main-title-wrapper,
+        .deco-line,
+        .footer,
+        .team-section {
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        /* ---- 点击后全部显现 ---- */
+        .container.revealed .overlay,
+        .container.revealed .overlay-vignette,
+        .container.revealed .embers {
+            opacity: 1;
+        }
+
+        .container.revealed .header {
+            opacity: 1;
+            transition: opacity 0.8s ease 0.2s;
+        }
+
+        .container.revealed .main-title-wrapper {
+            opacity: 1;
+            transition: opacity 0.8s ease 0.4s;
+        }
+
+        .container.revealed .deco-line {
+            opacity: 1;
+            transition: opacity 0.8s ease 0.6s;
+        }
+
+        .container.revealed .footer {
+            opacity: 1;
+            transition: opacity 0.8s ease 0.8s;
+        }
+
+        .container.revealed .team-section {
+            opacity: 1;
+            transition: opacity 0.8s ease 1s;
+        }
+
+        /* ---- 点击后标题动画 ---- */
+        .container.revealed .main-title {
+            animation: titleFadeInUp 1.2s ease 0.4s forwards;
+        }
+
+        .container.revealed .explore-btn {
+            animation: btnFadeInUp 0.8s ease 1.6s forwards;
+        }
+
+        .container.revealed .hint {
+            animation: fadeIn 1s ease 2s forwards;
+        }
+
+        .container.revealed .badge {
+            animation: fadeInDown 1s ease 0.2s forwards;
+        }
+
+        .container.revealed .subtitle {
+            animation: fadeInDown 1s ease 0.3s forwards;
+        }
+
+        /* ---- 遮罩 ---- */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background: linear-gradient(180deg,
+                rgba(40, 0, 0, 0.72) 0%,
+                rgba(80, 10, 10, 0.55) 35%,
+                rgba(100, 20, 20, 0.45) 60%,
+                rgba(30, 0, 0, 0.78) 100%
+            );
+        }
+
+        .overlay-vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(ellipse at 50% 45%, transparent 30%, rgba(0, 0, 0, 0.45) 100%);
+        }
+
+        /* ---- 烛光粒子 ---- */
+        .embers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .ember {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 180, 100, 0.6), rgba(200, 60, 30, 0.2));
+            box-shadow: 0 0 6px rgba(255, 160, 80, 0.15);
+            animation: emberRise linear infinite;
+            will-change: transform, opacity;
+        }
+
+        @keyframes emberRise {
+            0% {
+                transform: translateY(100%) translateX(0) scale(0.3);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.6;
+            }
+            70% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(15px) scale(0.6);
+                opacity: 0;
+            }
+        }
+
+        /* ---- 点击提示 ---- */
+        .click-hint {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 13px;
+            letter-spacing: 4px;
+            animation: hintPulse 2.5s ease-in-out infinite;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+        }
+
+        .container.revealed .click-hint {
+            opacity: 0;
+        }
+
+        @keyframes hintPulse {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ---- 顶部 ---- */
+        .header {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .badge {
+            display: inline-block;
+            border: 1.5px solid rgba(255, 215, 0, 0.65);
+            border-radius: 30px;
+            padding: 7px 24px;
+            font-size: 14px;
+            color: #E8C860;
+            letter-spacing: 3px;
+            backdrop-filter: blur(16px);
+            background: rgba(0, 0, 0, 0.35);
+            text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: rgba(220, 210, 200, 0.75);
+            margin-top: 14px;
+            letter-spacing: 5px;
+            text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+        }
+
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---- 主标题 ---- */
+        .main-title-wrapper {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .main-title {
+            color: #E8C860;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            line-height: 1.5;
+            text-shadow:
+                0 2px 20px rgba(180, 140, 60, 0.35),
+                0 0 60px rgba(180, 140, 60, 0.1),
+                0 2px 24px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .main-title .divider {
+            display: block;
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200, 180, 120, 0.5), transparent);
+            margin: 18px auto;
+        }
+
+        .main-title .sub-line {
+            display: block;
+            font-size: 18px;
+            font-weight: 400;
+            letter-spacing: 6px;
+            color: rgba(240, 235, 225, 0.9);
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        @keyframes titleFadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---- 装饰线 ---- */
+        .deco-line {
+            position: relative;
+            z-index: 2;
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200, 180, 140, 0.35), transparent);
+            margin: 0 auto;
+            pointer-events: none;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* ---- 底部 ---- */
+        .footer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+            padding-top: 16px;
+        }
+
+        .btn-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 110%;
+            height: 110%;
+            transform: translate(-50%, -50%) scale(1);
+            border-radius: 40px;
+            background: rgba(180, 150, 100, 0.08);
+            border: 1px solid rgba(200, 180, 140, 0.15);
+            animation: breatheRing 3s ease-in-out 2.6s infinite;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .container.revealed .btn-wrapper::before {
+            opacity: 1;
+        }
+
+        @keyframes breatheRing {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.08);
+                opacity: 0.15;
+            }
+        }
+
+        .explore-btn {
+            display: inline-block;
+            padding: 13px 48px;
+            font-size: 16px;
+            font-weight: 500;
+            color: rgba(240, 235, 225, 0.9);
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(200, 180, 140, 0.3);
+            border-radius: 40px;
+            letter-spacing: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+        }
+
+        .explore-btn:hover {
+            background: rgba(200, 180, 140, 0.15);
+            border-color: rgba(200, 180, 140, 0.5);
+            box-shadow: 0 2px 30px rgba(180, 150, 100, 0.15);
+        }
+
+        .explore-btn:active {
+            transform: scale(0.97);
+        }
+
+        @keyframes btnFadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .hint {
+            font-size: 12px;
+            color: rgba(180, 170, 160, 0.4);
+            margin-top: 14px;
+            letter-spacing: 3px;
+            opacity: 0;
+            text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ---- 创作团队 ---- */
+        .team-section {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            margin-top: 18px;
+            pointer-events: none;
+        }
+
+        .team-label {
+            text-align: center;
+            font-size: 10px;
+            color: rgba(200, 180, 140, 0.6);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        .name-row {
+            position: relative;
+            width: 100%;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .name-row::before,
+        .name-row::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 30px;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .name-row::before {
+            left: 0;
+            background: linear-gradient(90deg, rgba(50, 10, 10, 0.9) 0%, transparent 100%);
+        }
+
+        .name-row::after {
+            right: 0;
+            background: linear-gradient(270deg, rgba(50, 10, 10, 0.9) 0%, transparent 100%);
+        }
+
+        .name-scroll {
+            display: flex;
+            gap: 32px;
+            width: max-content;
+            animation: scrollLeft 20s linear infinite;
+            padding: 0 12px;
+            height: 100%;
+            align-items: center;
+        }
+
+        .name-scroll span {
+            flex-shrink: 0;
+            font-size: 10px;
+            color: rgba(220, 210, 200, 0.55);
+            letter-spacing: 2px;
+        }
+
+        .photo-strip-wrapper {
+            position: relative;
+            width: 100%;
+            height: 48px;
+            overflow: hidden;
+        }
+
+        .photo-strip-wrapper::before,
+        .photo-strip-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 30px;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .photo-strip-wrapper::before {
+            left: 0;
+            background: linear-gradient(90deg, rgba(50, 10, 10, 0.9) 0%, transparent 100%);
+        }
+
+        .photo-strip-wrapper::after {
+            right: 0;
+            background: linear-gradient(270deg, rgba(50, 10, 10, 0.9) 0%, transparent 100%);
+        }
+
+        .photo-strip {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            animation: scrollLeft 24s linear infinite;
+            padding: 0 6px;
+            height: 100%;
+            align-items: center;
+        }
+
+        .photo-strip:hover {
+            animation-play-state: paused;
+        }
+
+        .photo-card {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1.5px solid rgba(200, 180, 140, 0.3);
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .photo-card:hover {
+            transform: scale(1.1);
+            border-color: rgba(200, 180, 140, 0.6);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .name-row {
+            text-align: center;
+            font-size: 10px;
+            color: rgba(200, 180, 140, 0.5);
+            letter-spacing: 2px;
+            margin-top: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .name-scroll {
+            display: inline-block;
+            animation: scrollLeft 18s linear infinite;
+            padding-left: 8px;
+        }
+
+        .name-scroll span {
+            margin-right: 28px;
+            color: rgba(220, 210, 200, 0.6);
+        }
+
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ---- 点击涟漪 ---- */
+        .ripple {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            border-radius: 50%;
+            border: 1.5px solid rgba(200, 180, 140, 0.25);
+            background: rgba(200, 180, 140, 0.04);
+            animation: rippleExpand 1s ease-out forwards;
+        }
+
+        @keyframes rippleExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.3);
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="bg-slideshow" id="bgSlideshow">
+            <img src="index1.jpg" alt="背景1" class="active">
+            <img src="index2.jpg" alt="背景2">
+        </div>
+
+        <div class="overlay"></div>
+        <div class="overlay-vignette"></div>
+
+        <div class="embers" id="embers"></div>
+
+        <div class="click-hint">点击屏幕 继续</div>
+
+        <div class="header">
+            <div class="badge">★ 中山大学党校</div>
+            <div class="subtitle">— 党员教育 · 初心课堂 —</div>
+        </div>
+
+        <div class="main-title-wrapper">
+            <div class="main-title">
+                初心 · 印记
+                <span class="divider"></span>
+                <span class="sub-line">走近身边的共产党员</span>
+            </div>
+        </div>
+
+        <div class="deco-line"></div>
+
+        <div class="footer">
+            <div class="btn-wrapper">
+                <a class="explore-btn" href="page2.html">开始探索</a>
+            </div>
+            <div class="hint">轻触按钮，开启初心之旅</div>
+
+            <!-- 创作团队 -->
+            <div class="team-section">
+                <div class="team-label">创作团队：中山大学珠海校区 2026 年第 2 期<br>学生入党发展对象培训班 31 小组</div>
+                <div class="name-row">
+                    <div class="name-scroll" id="nameScroll2"></div>
+                </div>
+                <div class="photo-strip-wrapper">
+                    <div class="photo-strip" id="photoStrip2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var container = document.getElementById('container');
+            var hasRevealed = false;
+
+            // 烛光粒子
+            var embers = document.getElementById('embers');
+            for (var i = 0; i < 20; i++) {
+                var e = document.createElement('div');
+                e.className = 'ember';
+                var size = Math.random() * 4 + 2;
+                e.style.width = size + 'px';
+                e.style.height = size + 'px';
+                e.style.left = (Math.random() * 80 + 10) + '%';
+                e.style.bottom = '-10px';
+                e.style.animationDuration = (Math.random() * 14 + 14) + 's';
+                e.style.animationDelay = (Math.random() * 16) + 's';
+                embers.appendChild(e);
+            }
+
+            // ========== 创作团队照片 & 成员名单 ==========
+            var photoStrip2 = document.getElementById('photoStrip2');
+            var nameScroll2 = document.getElementById('nameScroll2');
+
+            var teamPhotos = [
+                { name: '成员1', file: '6abd4adb93b6eee37e4f879c4f8495e2.jpg' },
+                { name: '成员2', file: '5325475330169457a098fe7df180f1d4.jpg' },
+                { name: '成员3', file: '6abd4adb93b6eee37e4f879c4f8495e2.jpg' },
+                { name: '成员4', file: '5325475330169457a098fe7df180f1d4.jpg' },
+                { name: '成员5', file: '6abd4adb93b6eee37e4f879c4f8495e2.jpg' },
+                { name: '成员6', file: '5325475330169457a098fe7df180f1d4.jpg' },
+                { name: '成员7', file: '6abd4adb93b6eee37e4f879c4f8495e2.jpg' },
+                { name: '成员8', file: '5325475330169457a098fe7df180f1d4.jpg' },
+            ];
+
+            function createCard(photo) {
+                var card = document.createElement('div');
+                card.className = 'photo-card';
+                var img = document.createElement('img');
+                img.src = 'image/' + photo.file;
+                img.alt = photo.name;
+                img.loading = 'lazy';
+                card.appendChild(img);
+                return card;
+            }
+
+            teamPhotos.forEach(function(p) {
+                photoStrip2.appendChild(createCard(p));
+            });
+            teamPhotos.forEach(function(p) {
+                photoStrip2.appendChild(createCard(p));
+            });
+
+            function createNameSpan(photo) {
+                var span = document.createElement('span');
+                span.textContent = photo.name;
+                return span;
+            }
+
+            teamPhotos.forEach(function(p) {
+                nameScroll2.appendChild(createNameSpan(p));
+            });
+            teamPhotos.forEach(function(p) {
+                nameScroll2.appendChild(createNameSpan(p));
+            });
+
+            // ========== 背景轮播 ==========
+            var bgImages = document.querySelectorAll('#bgSlideshow img');
+            var currentBg = 0;
+            var bgTimer = setInterval(function() {
+                if (hasRevealed) return;
+                bgImages[currentBg].classList.remove('active');
+                currentBg = (currentBg + 1) % bgImages.length;
+                bgImages[currentBg].classList.add('active');
+            }, 2500);
+
+            // 点击屏幕 → 浮现内容
+            container.addEventListener('click', function(e) {
+                // 涟漪（只对第一次点击后的额外点击生效）
+                if (hasRevealed) {
+                    var r = document.createElement('div');
+                    r.className = 'ripple';
+                    r.style.left = e.clientX + 'px';
+                    r.style.top = e.clientY + 'px';
+                    document.body.appendChild(r);
+                    setTimeout(function() { r.remove(); }, 1000);
+                    return;
+                }
+
+                hasRevealed = true;
+                clearInterval(bgTimer);
+                container.classList.add('revealed');
+
+                // 涟漪（第一次揭示也有）
+                var r = document.createElement('div');
+                r.className = 'ripple';
+                r.style.left = e.clientX + 'px';
+                r.style.top = e.clientY + 'px';
+                document.body.appendChild(r);
+                setTimeout(function() { r.remove(); }, 1000);
+            });
+        })();
+    </script>
+</body>
+</html>

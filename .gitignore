@@ -1,0 +1,6 @@
+# Claude / Cursor local overrides (may contain secrets)
+.claude/settings.local.json
+
+# OS junk
+.DS_Store
+Thumbs.db
