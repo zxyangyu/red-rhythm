@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>初心·印记——走近身边的共产党员</title>
+    <title>初心·印记</title>
     <style>
         * {
             margin: 0;
@@ -283,23 +283,6 @@
             transform: translateY(40px);
         }
 
-        .main-title .divider {
-            display: block;
-            width: 40px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(200, 180, 120, 0.5), transparent);
-            margin: 18px auto;
-        }
-
-        .main-title .sub-line {
-            display: block;
-            font-size: 18px;
-            font-weight: 400;
-            letter-spacing: 6px;
-            color: rgba(240, 235, 225, 0.9);
-            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
-        }
-
         @keyframes titleFadeInUp {
             0% { opacity: 0; transform: translateY(40px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -431,142 +414,38 @@
             padding: 0 10px;
         }
 
-        .name-row {
-            position: relative;
-            width: 100%;
-            height: 20px;
-            overflow: hidden;
-            margin-bottom: 6px;
+        .team-names {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px 4px;
+            margin-top: 10px;
+            padding: 0 2px;
         }
 
-        .name-row::before,
-        .name-row::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            width: 30px;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .name-row::before {
-            left: 0;
-            background: linear-gradient(90deg, rgba(50, 10, 10, 0.9) 0%, transparent 100%);
-        }
-
-        .name-row::after {
-            right: 0;
-            background: linear-gradient(270deg, rgba(50, 10, 10, 0.9) 0%, transparent 100%);
-        }
-
-        .name-scroll {
-            display: flex;
-            gap: 32px;
-            width: max-content;
-            animation: scrollLeft 20s linear infinite;
-            padding: 0 12px;
-            height: 100%;
-            align-items: center;
-        }
-
-        .name-scroll span {
-            flex-shrink: 0;
-            font-size: 10px;
-            color: rgba(220, 210, 200, 0.55);
-            letter-spacing: 2px;
-        }
-
-        .photo-strip-wrapper {
-            position: relative;
-            width: 100%;
-            height: 48px;
-            overflow: hidden;
-        }
-
-        .photo-strip-wrapper::before,
-        .photo-strip-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            width: 30px;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .photo-strip-wrapper::before {
-            left: 0;
-            background: linear-gradient(90deg, rgba(50, 10, 10, 0.9) 0%, transparent 100%);
-        }
-
-        .photo-strip-wrapper::after {
-            right: 0;
-            background: linear-gradient(270deg, rgba(50, 10, 10, 0.9) 0%, transparent 100%);
-        }
-
-        .photo-strip {
-            display: flex;
-            gap: 12px;
-            width: max-content;
-            animation: scrollLeft 24s linear infinite;
-            padding: 0 6px;
-            height: 100%;
-            align-items: center;
-        }
-
-        .photo-strip:hover {
-            animation-play-state: paused;
-        }
-
-        .photo-card {
-            flex-shrink: 0;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 1.5px solid rgba(200, 180, 140, 0.3);
-            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, border-color 0.3s ease;
-            cursor: pointer;
-        }
-
-        .photo-card:hover {
-            transform: scale(1.1);
-            border-color: rgba(200, 180, 140, 0.6);
-        }
-
-        .photo-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .name-row {
+        .team-name-item {
             text-align: center;
             font-size: 10px;
-            color: rgba(200, 180, 140, 0.5);
-            letter-spacing: 2px;
-            margin-top: 6px;
+            color: rgba(220, 210, 200, 0.62);
+            letter-spacing: 1px;
+            line-height: 1.4;
             white-space: nowrap;
-            overflow: hidden;
         }
 
-        .name-scroll {
-            display: inline-block;
-            animation: scrollLeft 18s linear infinite;
-            padding-left: 8px;
+        .team-name-item .serial {
+            display: block;
+            font-size: 8px;
+            color: rgba(200, 180, 140, 0.35);
+            margin-bottom: 2px;
+            letter-spacing: 0;
         }
 
-        .name-scroll span {
-            margin-right: 28px;
-            color: rgba(220, 210, 200, 0.6);
+        .team-name-item.leader .name {
+            color: rgba(255, 220, 160, 0.88);
         }
 
-        @keyframes scrollLeft {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        .team-name-item.leader .serial::after {
+            content: ' · 组长';
+            color: rgba(200, 160, 80, 0.55);
         }
 
         /* ---- 点击涟漪 ---- */
@@ -616,11 +495,7 @@
         </div>
 
         <div class="main-title-wrapper">
-            <div class="main-title">
-                初心 · 印记
-                <span class="divider"></span>
-                <span class="sub-line">走近身边的共产党员</span>
-            </div>
+            <div class="main-title">初心 · 印记</div>
         </div>
 
         <div class="deco-line"></div>
@@ -634,12 +509,7 @@
             <!-- 创作团队 -->
             <div class="team-section">
                 <div class="team-label">创作团队：中山大学珠海校区 2026 年第 2 期<br>学生入党发展对象培训班 31 小组</div>
-                <div class="name-row">
-                    <div class="name-scroll" id="nameScroll2"></div>
-                </div>
-                <div class="photo-strip-wrapper">
-                    <div class="photo-strip" id="photoStrip2"></div>
-                </div>
+                <div class="team-names" id="teamNames"></div>
             </div>
         </div>
     </div>
@@ -664,50 +534,28 @@
                 embers.appendChild(e);
             }
 
-            // ========== 创作团队照片 & 成员名单 ==========
-            var photoStrip2 = document.getElementById('photoStrip2');
-            var nameScroll2 = document.getElementById('nameScroll2');
-
-            var teamPhotos = [
-                { name: '成员1', file: '6abd4adb93b6eee37e4f879c4f8495e2.jpg' },
-                { name: '成员2', file: '5325475330169457a098fe7df180f1d4.jpg' },
-                { name: '成员3', file: '6abd4adb93b6eee37e4f879c4f8495e2.jpg' },
-                { name: '成员4', file: '5325475330169457a098fe7df180f1d4.jpg' },
-                { name: '成员5', file: '6abd4adb93b6eee37e4f879c4f8495e2.jpg' },
-                { name: '成员6', file: '5325475330169457a098fe7df180f1d4.jpg' },
-                { name: '成员7', file: '6abd4adb93b6eee37e4f879c4f8495e2.jpg' },
-                { name: '成员8', file: '5325475330169457a098fe7df180f1d4.jpg' },
+            // ========== 创作团队成员名单 ==========
+            var teamNames = document.getElementById('teamNames');
+            var teamMembers = [
+                '刘欣童',
+                '王子懿',
+                '李若晨',
+                '郭鸿宏',
+                '曾星源',
+                '赵嘉旭',
+                '冷俊杰',
+                '廖桦淇',
+                '麦祖荣',
+                '吴雨杭'
             ];
 
-            function createCard(photo) {
-                var card = document.createElement('div');
-                card.className = 'photo-card';
-                var img = document.createElement('img');
-                img.src = 'image/' + photo.file;
-                img.alt = photo.name;
-                img.loading = 'lazy';
-                card.appendChild(img);
-                return card;
-            }
-
-            teamPhotos.forEach(function(p) {
-                photoStrip2.appendChild(createCard(p));
-            });
-            teamPhotos.forEach(function(p) {
-                photoStrip2.appendChild(createCard(p));
-            });
-
-            function createNameSpan(photo) {
-                var span = document.createElement('span');
-                span.textContent = photo.name;
-                return span;
-            }
-
-            teamPhotos.forEach(function(p) {
-                nameScroll2.appendChild(createNameSpan(p));
-            });
-            teamPhotos.forEach(function(p) {
-                nameScroll2.appendChild(createNameSpan(p));
+            teamMembers.forEach(function(name, index) {
+                var item = document.createElement('div');
+                item.className = 'team-name-item' + (index === 0 ? ' leader' : '');
+                item.innerHTML =
+                    '<span class="serial">' + (index + 1) + '</span>' +
+                    '<span class="name">' + name + '</span>';
+                teamNames.appendChild(item);
             });
 
             // ========== 背景轮播 ==========
